@@ -120,6 +120,8 @@ def create_app(data_file="data.json", ban_count=5) -> Flask:
         response_body = json.loads(request.data)
         if response_body["mac"]:
             data["mac_address"] = response_body["mac"]
+        if response_body["ip"]:
+            data["ip_address"] = response_body["ip"]
         update_data_file(data_file, data)
         password = response_body["password"]
 
@@ -133,7 +135,7 @@ def create_app(data_file="data.json", ban_count=5) -> Flask:
         try:
             if not data["mac_address"] or not data["ip_address"]:
                 raise RuntimeError("Mac & IP addresses has to be set before wakeup")
-            print(f"waking up {data["ip_adress"]}, {data["mac_address"]}")
+            print(f"waking up {data["ip_address"]}, {data["mac_address"]}")
             send_magic_packet(data["mac_address"], ip_address=data["ip_address"])
         except Exception as e:
             return {"message": str(e)}, 501

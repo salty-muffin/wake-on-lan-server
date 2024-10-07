@@ -86,7 +86,11 @@
 				fetch('/wake', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ mac: macInput.value ?? macAddress, password: passwordInput.value })
+					body: JSON.stringify({
+						mac: macInput.value ?? macAddress,
+						ip: ipInput.value ?? ipAddress,
+						password: passwordInput.value
+					})
 				})
 					.then((response) => response.json())
 					.then((data) => {
