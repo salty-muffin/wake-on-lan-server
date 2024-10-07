@@ -68,15 +68,16 @@ def check_ip(ip: str, data):
         KeyError: If the 'ip_ban_list' key is not found in 'data'.
     """
 
-    for item in data["ip_ban_list"]:
-        if ip == item["ip"]:
-            item["unautorized_requests"] += 1
-            item["time_added"] = int(time.time())
-            break
-    else:
-        data["ip_ban_list"].append(
-            {"ip": ip, "unautorized_requests": 1, "time_added": int(time.time())}
-        )
+    if not ip.split('.')[0] in [10, 172, 192]:
+        for item in data["ip_ban_list"]:
+            if ip == item["ip"]:
+                item["unautorized_requests"] += 1
+                item["time_added"] = int(time.time())
+                break
+        else:
+            data["ip_ban_list"].append(
+                {"ip": ip, "unautorized_requests": 1, "time_added": int(time.time())}
+            )
 
     return data
 
@@ -169,11 +170,12 @@ def create_app(data_file="data.json", ban_count=5) -> Flask:
 
         # do not allow if ip is banned
         ip = request.environ.get("REMOTE_ADDR")
-        for item in data["ip_ban_list"]:
-            if ip == item["ip"] and item["unautorized_requests"] >= ban_count:
-                item["unautorized_requests"] += 1
-                item["time_added"] = int(time.time())
-                update_data_file(data_file, data)
-                abort(403)
+        if not ip.split('.')[0] in [10, 172, 192]:
+            for item in data["ip_ban_list"]:
+                if ip == item["ip"] and item["unautorized_requests"] >= ban_count:
+                    item["unautorized_requests"] += 1
+                    item["time_added"] = int(time.time())
+                    update_data_file(data_file, data)
+                    abort(403)
 
     return app
