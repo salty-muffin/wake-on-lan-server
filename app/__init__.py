@@ -119,7 +119,8 @@ def create_app(data_file="data.json", ban_count=5) -> Flask:
         global data
 
         response_body = json.loads(request.data)
-        data["mac_address"] = response_body["mac"]
+        if response_body["mac"]:
+            data["mac_address"] = response_body["mac"]
         update_data_file(data_file, data)
         password = response_body["password"]
 
