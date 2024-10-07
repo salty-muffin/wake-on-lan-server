@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Wake Up</title>
+
+		<style>
+			html,
+			body {
+				margin: 0;
+			}
+
+			body {
+				font-family: sans-serif;
+				color: lightgray;
+				background-color: black;
+				line-height: 1.1em;
+			}
+
+			#container {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				min-height: 100vh;
+			}
+
+			#input {
+				display: flex;
+				flex-direction: column;
+
+				gap: 1em;
+
+				padding: 1em;
+				width: min(20em, 100vw);
+			}
+
+			.input-group {
+				display: flex;
+				flex-direction: column;
+				gap: 0.4em;
+			}
+
+			input,
+			button {
+				background-color: lightgray;
+				color: black;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<div id="input">
+				<div class="input-group">
+					<label for="password">Password:</label>
+					<input id="password" type="password" name="password" />
+				</div>
+				<div class="input-group">
+					<label for="mac">MAC Adress (leave empty for using the last one):</label>
+					<input id="mac" type="text" name="mac" />
+				</div>
+				<div class="input-group">
+					<button onclick="wake()" id="wake">Wake</button>
+				</div>
+				<div class="input-group">
+					<span id="return"></span>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			let macAdress = '{{ mac }}';
+
+			let passwordInput = document.getElementById('password');
+			let macInput = document.getElementById('mac');
+			let returnSpan = document.getElementById('return');
+
+			const wake = () => {
+				fetch('/wake', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ mac: macInput.value ?? macAdress, password: passwordInput.value })
+				})
+					.then((response) => response.json())
+					.then((data) => {
+						returnSpan.innerText = data.message;
+					})
+					.catch((error) => {
+						returnSpan.innerText = `Failed to send: ${error}`;
+					});
+			};
+		</script>
+	</body>
+</html>
