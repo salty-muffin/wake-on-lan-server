@@ -57,8 +57,12 @@
 					<input id="password" type="password" name="password" />
 				</div>
 				<div class="input-group">
-					<label for="mac">MAC Adress (leave empty for using the last one):</label>
+					<label for="mac">MAC address (leave empty for using the last one):</label>
 					<input id="mac" type="text" name="mac" />
+				</div>
+				<div class="input-group">
+					<label for="ip">IP address (leave empty for using the last one):</label>
+					<input id="ip" type="text" name="ip" />
 				</div>
 				<div class="input-group">
 					<button onclick="wake()" id="wake">Wake</button>
@@ -70,17 +74,19 @@
 		</div>
 
 		<script>
-			let macAdress = '{{ mac }}';
+			let macAddress = '{{ mac }}';
+			let ipAddress = '{{ ip }}';
 
 			let passwordInput = document.getElementById('password');
 			let macInput = document.getElementById('mac');
+			let ipInput = document.getElementById('ip');
 			let returnSpan = document.getElementById('return');
 
 			const wake = () => {
 				fetch('/wake', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ mac: macInput.value ?? macAdress, password: passwordInput.value })
+					body: JSON.stringify({ mac: macInput.value ?? macAddress, password: passwordInput.value })
 				})
 					.then((response) => response.json())
 					.then((data) => {

@@ -4,7 +4,8 @@ services:
     command:
       ['python3', '-u', '-m', 'gunicorn', '-w', '1', '-b', '0.0.0.0:5000', 'app:create_app()']
     restart: unless-stopped
-    network_mode: host
+    ports:
+      - 9:9/udp
     volumes:
       - .:/app
   caddy:
