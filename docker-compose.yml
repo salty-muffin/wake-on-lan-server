@@ -5,7 +5,7 @@ services:
       ['python3', '-u', '-m', 'gunicorn', '-w', '1', '-b', '0.0.0.0:5000', 'app:create_app()']
     restart: unless-stopped
     ports:
-      - 5000:5000
+      - '9:9'
     volumes:
       - .:/app
   caddy:
