@@ -1,9 +1,10 @@
 import os
 import json
 import re
-from flask import Flask, request, abort, render_template
+from flask import Flask, request, abort
 from app.config import DevConfig, ProdConfig
 import time
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from wakeonlan import send_magic_packet
 
@@ -105,6 +106,9 @@ def create_app(data_file="data.json", ban_count=10) -> Flask:
 
     # create and configure the app
     app = Flask(__name__, static_url_path="")
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+    )
 
     app.config.from_object(DevConfig if os.environ.get("FLASK_DEBUG") else ProdConfig)
 
@@ -125,7 +129,7 @@ def create_app(data_file="data.json", ban_count=10) -> Flask:
 
         if password != os.environ.get("PASSWORD"):
             ip = request.environ.get("REMOTE_ADDR")
-            if not ip.split('.')[0] in [10, 172, 192]:
+            if not ip.split('.')[0] in [10, 127, 172, 192]:
                 data = check_ip(ip, data)
                 update_data_file(data_file, data)
             return {"message": "Wrong password."}, 403
@@ -152,7 +156,7 @@ def create_app(data_file="data.json", ban_count=10) -> Flask:
             ]
         ):
             ip = request.environ.get("REMOTE_ADDR")
-            if not ip.split('.')[0] in [10, 172, 192]:
+            if not ip.split('.')[0] in [10, 127, 172, 192]:
                 data = check_ip(ip, data)
                 update_data_file(data_file, data)
 
@@ -172,7 +176,7 @@ def create_app(data_file="data.json", ban_count=10) -> Flask:
 
         # do not allow if ip is banned
         ip = request.environ.get("REMOTE_ADDR")
-        if not ip.split('.')[0] in [10, 172, 192]:
+        if not ip.split('.')[0] in [10, 127, 172, 192]:
             for item in data["ip_ban_list"]:
                 if ip == item["ip"] and item["unautorized_requests"] >= ban_count:
                     item["unautorized_requests"] += 1
