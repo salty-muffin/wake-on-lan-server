@@ -104,7 +104,7 @@ def create_app(data_file="data.json", ban_count=10) -> Flask:
             json.dump(data, file)
 
     # create and configure the app
-    app = Flask(__name__)
+    app = Flask(__name__, static_url_path="")
 
     app.config.from_object(DevConfig if os.environ.get("FLASK_DEBUG") else ProdConfig)
 
