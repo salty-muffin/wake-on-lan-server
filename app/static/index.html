@@ -61,10 +61,6 @@
 					<input id="mac" type="text" name="mac" />
 				</div>
 				<div class="input-group">
-					<label for="ip">IP address (leave empty for using the last one):</label>
-					<input id="ip" type="text" name="ip" />
-				</div>
-				<div class="input-group">
 					<button onclick="wake()" id="wake">Wake</button>
 				</div>
 				<div class="input-group">
@@ -74,12 +70,8 @@
 		</div>
 
 		<script>
-			let macAddress = '{{ mac }}';
-			let ipAddress = '{{ ip }}';
-
 			let passwordInput = document.getElementById('password');
 			let macInput = document.getElementById('mac');
-			let ipInput = document.getElementById('ip');
 			let returnSpan = document.getElementById('return');
 
 			const wake = () => {
@@ -87,8 +79,7 @@
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
-						mac: macInput.value ?? macAddress,
-						ip: ipInput.value ?? ipAddress,
+						mac: macInput.value,
 						password: passwordInput.value
 					})
 				})

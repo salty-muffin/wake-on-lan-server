@@ -90,10 +90,10 @@ def update_data_file(data_file: str, data: list[dict[str, str | int]]) -> None:
         json.dump(data, file)
 
 
-data = {"ip_ban_list": [], "mac_address": "", "ip_address": ""}
+data = {"ip_ban_list": [], "mac_address": ""}
 
 
-def create_app(data_file="data.json", ban_count=5) -> Flask:
+def create_app(data_file="data.json", ban_count=10) -> Flask:
     global data
 
     if os.path.isfile(data_file):
@@ -110,7 +110,7 @@ def create_app(data_file="data.json", ban_count=5) -> Flask:
 
     @app.route("/")
     def index():
-        return render_template("index.html", mac=data["mac_address"], ip=data["ip_address"])
+        return app.send_static_file("index.html")
 
     # wakeup api
     @app.route("/wake", methods=["POST"])
@@ -120,8 +120,6 @@ def create_app(data_file="data.json", ban_count=5) -> Flask:
         response_body = json.loads(request.data)
         if response_body["mac"]:
             data["mac_address"] = response_body["mac"]
-        if response_body["ip"]:
-            data["ip_address"] = response_body["ip"]
         update_data_file(data_file, data)
         password = response_body["password"]
 
@@ -133,10 +131,10 @@ def create_app(data_file="data.json", ban_count=5) -> Flask:
             return {"message": "Wrong password."}, 403
 
         try:
-            if not data["mac_address"] or not data["ip_address"]:
+            if not data["mac_address"]:
                 raise RuntimeError("Mac & IP addresses has to be set before wakeup")
-            print(f"waking up {data["ip_address"]}, {data["mac_address"]}")
-            send_magic_packet(data["mac_address"], ip_address=data["ip_address"])
+            print(f"waking up {data["mac_address"]}")
+            send_magic_packet(data["mac_address"])
         except Exception as e:
             return {"message": str(e)}, 501
 
