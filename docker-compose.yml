@@ -4,36 +4,6 @@ services:
     command:
       ['python3', '-u', '-m', 'gunicorn', '-w', '1', '-b', '0.0.0.0:5000', 'app:create_app()']
     restart: unless-stopped
-    ports:
-      - 9:9/udp
-    networks:
-      vpcbr:
-        ipv4_address: 172.32.0.10
+    network_mode: host
     volumes:
       - .:/app
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    ports:
-      - 80:80
-      - 443:443
-      - 443:443/udp
-    networks:
-      vpcbr:
-        ipv4_address: 172.32.0.11
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-
-volumes:
-  caddy_data:
-  caddy_config:
-
-networks:
-  app:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.32.0.0/16
-          gateway: 172.32.0.1
