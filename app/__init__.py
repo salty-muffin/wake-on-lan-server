@@ -31,7 +31,7 @@ def create_app(data_file="data.json") -> Flask:
     # create and configure the app
     app = Flask(__name__, static_url_path="")
     # proxy fix
-    # app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
     # ipban for security
     os.makedirs("records", exist_ok=True)
