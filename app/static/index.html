@@ -91,7 +91,6 @@
 			#return {
 				margin-top: 0.5em;
 				font-size: 0.9em;
-				color: #ff8080;
 				min-height: 1.5em;
 			}
 		</style>
@@ -111,7 +110,7 @@
 					<button onclick="wake()" id="wake">Wake</button>
 				</div>
 				<div class="input-group">
-					<span id="return"></span>
+					<span id="return" style="color: #80ff86"></span>
 				</div>
 			</div>
 		</div>
@@ -132,9 +131,11 @@
 				})
 					.then((response) => response.json())
 					.then((data) => {
+						returnSpan.style.color = data.message === 'OK' ? '#80ff80' : '#ff8080';
 						returnSpan.innerText = data.message;
 					})
 					.catch((error) => {
+						returnSpan.style.color = '#ff8080';
 						returnSpan.innerText = `Failed to send: ${error}`;
 					});
 			};
