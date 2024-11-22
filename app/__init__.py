@@ -1,7 +1,5 @@
 import os
 import json
-import re
-import time
 from flask import Flask, request, abort
 from flask_ipban import IpBan
 from werkzeug.middleware.proxy_fix import ProxyFix
